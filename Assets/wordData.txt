@@ -16,3 +16,12 @@ r,Constoants
 t,Constoants
 h,Constoants
 w,Constoants
+|Fast Food,High-End
+MacDonalds,Fast Food
+KFC,Fast Food
+Burger King,Fast Food
+Long John's,Fast Food
+Jack's Place,High-End
+Morganfield's,High-End
+Ichiban,High-End
+Dian Xiao Er,High-End
