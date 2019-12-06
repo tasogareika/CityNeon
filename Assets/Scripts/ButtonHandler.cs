@@ -18,10 +18,21 @@ public class ButtonHandler : MonoBehaviour
         thisRect = GetComponent<RectTransform>();
         xOffset = thisRect.rect.width * 0.5f;
         yOffset = thisRect.rect.height * 0.5f;
-        appWidthLimit = WordSorterHandler.singleton.appWidth - thisRect.rect.width;
-        appHeightLimit = WordSorterHandler.singleton.appHeight - thisRect.rect.height;
+        appWidthLimit = BackendHandler.singleton.appWidth - thisRect.rect.width;
+        appHeightLimit = BackendHandler.singleton.appHeight - thisRect.rect.height;
     }
 
+    #region WORD PICKER FUNCTIONS
+    public void OnClick()
+    {
+        if (WordPickerHandler.singleton.canClick)
+        {
+            WordPickerHandler.singleton.checkWord(textDisplay.text, gameObject);
+        }
+    }
+    #endregion
+
+    #region WORD SORTER FUNCTIONS
     public void StartDrag()
     {
         transform.SetParent(WordSorterHandler.singleton.mainCanvas.transform);
@@ -73,4 +84,5 @@ public class ButtonHandler : MonoBehaviour
             WordSorterHandler.singleton.putIntoList();
         }
     }
+    #endregion
 }

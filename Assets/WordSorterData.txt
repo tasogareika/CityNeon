@@ -25,3 +25,12 @@ Jack's Place,High-End
 Morganfield's,High-End
 Ichiban,High-End
 Dian Xiao Er,High-End
+|Mammals,Non-Mammals
+Platypus,Mammals
+Whale,Mammals
+Dog,Mammals
+Bear,Mammals
+Owl,Non-Mammals
+Preying Mantils,Non-Mammals
+Carp,Non-Mammals
+Komodo Dragon,Non-Mammals

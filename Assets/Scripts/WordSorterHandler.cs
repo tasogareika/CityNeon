@@ -15,23 +15,27 @@ public class WordSorterHandler : MonoBehaviour
     public GameObject leftColumn, rightColumn;
     public List<string> wordList;
     public List<GameObject> buttonList;
-    [HideInInspector] public float appWidth, appHeight;
     private string filePath;
+    private float appWidth, appHeight, maxScore, gameTimer, totalScore;
+    private bool timerRun;
 
     private void Awake()
     {
         singleton = this;
-        appWidth = 1080;
-        appHeight = 1920;
+        maxScore = 10000;
     }
 
     private void Start()
     {
+        timerRun = false;
         currButton = null;
         currList = null;
         roundNum = 1;
 
-        filePath = Application.dataPath + "/" + "wordData.txt";
+        appWidth = BackendHandler.singleton.appWidth;
+        appHeight = BackendHandler.singleton.appHeight;
+
+        filePath = Application.dataPath + "/" + "WordSorterData.txt";
         readFile();
     }
 
@@ -55,6 +59,8 @@ public class WordSorterHandler : MonoBehaviour
         int index = ran.Next(1, wordList.Count);
         buttonSpawn();
         spawnWords(wordList[index]);
+        gameTimer = 0;
+        timerRun = true;
         wordList.RemoveAt(index);
     }
 
@@ -75,51 +81,53 @@ public class WordSorterHandler : MonoBehaviour
         {
             float xVariance = Mathf.RoundToInt(Random.Range(0, appWidth * 0.3f));
             float yVariance = Mathf.RoundToInt(Random.Range(0, appHeight * 0.1f));
+            var thisRect = buttonList[i].GetComponent<RectTransform>();
+            buttonList[i].GetComponent<ButtonHandler>().inList = false;
 
             switch (i)
             {
                 case 0:
-                    buttonList[i].GetComponent<RectTransform>().anchoredPosition = new Vector2(0 + xVariance, midpoint - yVariance);
+                    thisRect.anchoredPosition = new Vector2(0 + xVariance, midpoint - yVariance);
                     break;
 
                 case 1:
-                    buttonList[i].GetComponent<RectTransform>().anchoredPosition = new Vector2(0 + xVariance, midpoint * 0.7f - yVariance);
+                    thisRect.anchoredPosition = new Vector2(0 + xVariance, midpoint * 0.7f - yVariance);
                     break;
 
                 case 2:
-                    buttonList[i].GetComponent<RectTransform>().anchoredPosition = new Vector2(0 + xVariance, midpoint * 0.4f - yVariance);
+                    thisRect.anchoredPosition = new Vector2(0 + xVariance, midpoint * 0.4f - yVariance);
                     break;
 
                 case 3:
-                    buttonList[i].GetComponent<RectTransform>().anchoredPosition = new Vector2(0 + xVariance, midpoint * 0.1f - yVariance);
+                    thisRect.anchoredPosition = new Vector2(0 + xVariance, midpoint * 0.1f - yVariance);
                     break;
 
                 case 4:
-                    buttonList[i].GetComponent<RectTransform>().anchoredPosition = new Vector2(rightside + xVariance, midpoint - yVariance);
+                    thisRect.anchoredPosition = new Vector2(rightside + xVariance, midpoint - yVariance);
                     break;
 
                 case 5:
-                    buttonList[i].GetComponent<RectTransform>().anchoredPosition = new Vector2(rightside + xVariance, midpoint * 0.7f - yVariance);
+                    thisRect.anchoredPosition = new Vector2(rightside + xVariance, midpoint * 0.7f - yVariance);
                     break;
 
                 case 6:
-                    buttonList[i].GetComponent<RectTransform>().anchoredPosition = new Vector2(rightside + xVariance, midpoint * 0.4f - yVariance);
+                    thisRect.anchoredPosition = new Vector2(rightside + xVariance, midpoint * 0.4f - yVariance);
                     break;
 
                 case 7:
-                    buttonList[i].GetComponent<RectTransform>().anchoredPosition = new Vector2(rightside + xVariance, midpoint * 0.1f - yVariance);
+                    thisRect.anchoredPosition = new Vector2(rightside + xVariance, midpoint * 0.1f - yVariance);
                     break;
             }
 
             //shift back to edge if crossed boundaries
-            if (buttonList[i].GetComponent<RectTransform>().anchoredPosition.y < 0)
+            if (thisRect.anchoredPosition.y < 0)
             {
-                buttonList[i].GetComponent<RectTransform>().anchoredPosition = new Vector2(buttonList[i].GetComponent<RectTransform>().anchoredPosition.x, 0);
+                thisRect.anchoredPosition = new Vector2(thisRect.anchoredPosition.x, 0);
             }
 
-            if (buttonList[i].GetComponent<RectTransform>().anchoredPosition.x > appWidth - buttonList[i].GetComponent<RectTransform>().rect.width)
+            if (thisRect.anchoredPosition.x > appWidth - thisRect.rect.width)
             {
-                buttonList[i].GetComponent<RectTransform>().anchoredPosition = new Vector2(appWidth - buttonList[i].GetComponent<RectTransform>().rect.width, buttonList[i].GetComponent<RectTransform>().anchoredPosition.y);
+                thisRect.anchoredPosition = new Vector2(appWidth - thisRect.rect.width, thisRect.anchoredPosition.y);
             }
         }
     }
@@ -129,6 +137,11 @@ public class WordSorterHandler : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F5))
         {
             SceneManager.LoadScene(0);
+        }
+
+        if (timerRun)
+        {
+            gameTimer += Time.deltaTime;
         }
     }
 
@@ -176,10 +189,15 @@ public class WordSorterHandler : MonoBehaviour
         if (leftColumn.transform.parent.GetComponent<ListHander>().allCorrect() && rightColumn.transform.parent.GetComponent<ListHander>().allCorrect())
         {
             Debug.Log("all correct!");
-            roundNum++;
+            Debug.Log(System.Math.Round(gameTimer, 2));
+
             if (roundNum < 4)
             {
+                roundNum++;
                 chooseCategory();
+            } else
+            {
+                Debug.Log("end game");
             }
 
         } else
